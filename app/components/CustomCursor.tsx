@@ -20,7 +20,7 @@ export default function CustomCursor({
   const [isMoving, setIsMoving] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [trail, setTrail] = useState<Array<{ x: number; y: number; opacity: number }>>([])
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | null>(null)
 
   // Comet trail animation
   useEffect(() => {
