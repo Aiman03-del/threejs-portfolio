@@ -1,10 +1,23 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 interface InsidePlanetContentProps {
   planetId: string
 }
 
 export default function InsidePlanetContent({ planetId }: InsidePlanetContentProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   const content = (() => {
     switch (planetId) {
       case 'about':
@@ -279,36 +292,43 @@ export default function InsidePlanetContent({ planetId }: InsidePlanetContentPro
   })()
 
   return (
-    <>
-      {/* Left side: Profile image */}
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        gap: 20,
+        padding: 20,
+        height: '100%',
+        overflowY: 'auto',
+        alignItems: isMobile ? 'center' : 'flex-start',
+        zIndex: 2
+      }}
+    >
+      {/* Profile image */}
       <img 
         src="/images/profile.png" 
         alt="Profile"
         style={{
-          position: 'absolute',
-          left: 20,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 'min(400px, 35vw)',
+          width: isMobile ? '100%' : 'min(400px, 35vw)',
+          maxWidth: isMobile ? 350 : 'none',
           height: 'auto',
           borderRadius: 12,
           objectFit: 'contain',
-          zIndex: 2
+          alignSelf: isMobile ? 'center' : 'flex-start'
         }}
       />
 
-      {/* Right side: Content */}
+      {/* Content */}
       <div
         style={{
-          position: 'absolute',
-          right: 20,
-          top: 20,
-          bottom: 20,
-          width: 'min(680px, 55vw)',
+          flex: 1,
           color: '#f5f5f5',
-          padding: 20,
-          overflowY: 'auto',
-          zIndex: 2
+          minWidth: 0
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -332,7 +352,7 @@ export default function InsidePlanetContent({ planetId }: InsidePlanetContentPro
           {content.content}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
